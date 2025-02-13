@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { sign } from "hono/jwt";
+import { signinInput, signupInput } from "@yashodaramreddy/medium-common";
 
 export const userRouter = new Hono<{
   Bindings: {
@@ -17,6 +18,13 @@ userRouter.post("/signup", async (c) => {
   }).$extends(withAccelerate());
 
   // TODO: Zod validation & password should be hashed
+  const { success } = signupInput.safeParse(body);
+  if (!success) {
+    c.status(400);
+    return c.json({
+      error: "Invalid input, Please use valid email & Password",
+    });
+  }
 
   try {
     const user = await prisma.user.create({
@@ -41,6 +49,13 @@ userRouter.post("/signin", async (c) => {
   }).$extends(withAccelerate());
 
   const body = await c.req.json();
+  const { success } = signinInput.safeParse(body);
+  if (!success) {
+    c.status(400);
+    return c.json({
+      error: "Invalid input, Please use valid email & Password",
+    });
+  }
   const user = await prisma.user.findUnique({
     where: {
       email: body.email,
