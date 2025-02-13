@@ -17,7 +17,6 @@ userRouter.post("/signup", async (c) => {
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  // TODO: Zod validation & password should be hashed
   const { success } = signupInput.safeParse(body);
   if (!success) {
     c.status(400);

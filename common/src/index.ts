@@ -16,7 +16,7 @@ export const postInput = z.object({
   content: z.string(),
 });
 
-const updatePostInput = z.object({
+export const updatePostInput = z.object({
   id: z.number(),
   title: z.string(),
   content: z.string(),
