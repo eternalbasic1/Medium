@@ -55,6 +55,7 @@ export const AuthForm = () => {
                 type="text"
                 id="name"
                 name="name"
+                autoComplete="name"
                 value={name}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border rounded-md bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-gray-500"
@@ -70,6 +71,7 @@ export const AuthForm = () => {
               type="email"
               id="email"
               name="email"
+              autoComplete="email"
               value={email}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-md bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-gray-500"
@@ -84,6 +86,7 @@ export const AuthForm = () => {
               type="password"
               id="password"
               name="password"
+              autoComplete="current-password"
               value={password}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-md bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-gray-500"
