@@ -6,6 +6,21 @@ import { Blogs } from "./pages/Blogs";
 import { Publish } from "./pages/Publish";
 import { JSX, useEffect, useState } from "react";
 
+// 404 Not Found Page Component
+const NotFound = () => {
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h1 className="text-3xl font-bold">404 - Page Not Found</h1>
+      <p className="text-gray-600 mt-2">
+        The page you are looking for does not exist.
+      </p>
+      <a href="/signin" className="text-blue-600 mt-4 hover:underline">
+        Go to Sign In
+      </a>
+    </div>
+  );
+};
+
 // Protected Route Component
 const ProtectedRoute = ({
   children,
@@ -23,77 +38,80 @@ function App() {
   const [loading, setLoading] = useState(true); // Add loading state
 
   // Effect to check token and update authentication status
-  //TODO: Not correct way of checking need to hit backend & verify with jwt decode & authenticate cause user can manually set in local storage
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (token) {
-      setIsAuthenticated(true); // Set authenticated if token exists
+      setIsAuthenticated(true);
     } else {
-      setIsAuthenticated(false); // Set false if no token
+      setIsAuthenticated(false);
     }
 
-    setLoading(false); // Set loading to false once authentication check is done
+    setLoading(false);
   }, []);
 
-  // If the app is loading (checking token), don't render routes yet
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/signup"
-            element={
-              <Signup
-                setUserProfile={setUserProfile}
-                setIsAuthenticated={setIsAuthenticated}
-                userProfile={userProfile}
-              />
-            }
-          />
-          <Route
-            path="/signin"
-            element={
-              <Signin
-                setUserProfile={setUserProfile}
-                setIsAuthenticated={setIsAuthenticated}
-                userProfile={userProfile}
-              />
-            }
-          />
+    <BrowserRouter>
+      <Routes>
+        {/* Redirect base URL to Signin */}
+        <Route path="/" element={<Navigate to="/signin" />} />
 
-          {/* Protected Routes */}
-          <Route
-            path="/blog/:id"
-            element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
-                <Blog userProfile={userProfile} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/blogs"
-            element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
-                <Blogs userProfile={userProfile} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/publish"
-            element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
-                <Publish userProfile={userProfile} />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </>
+        {/* Auth Routes */}
+        <Route
+          path="/signup"
+          element={
+            <Signup
+              setUserProfile={setUserProfile}
+              setIsAuthenticated={setIsAuthenticated}
+              userProfile={userProfile}
+            />
+          }
+        />
+        <Route
+          path="/signin"
+          element={
+            <Signin
+              setUserProfile={setUserProfile}
+              setIsAuthenticated={setIsAuthenticated}
+              userProfile={userProfile}
+            />
+          }
+        />
+
+        {/* Protected Routes */}
+        <Route
+          path="/blog/:id"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Blog userProfile={userProfile} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/blogs"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Blogs userProfile={userProfile} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/publish"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Publish userProfile={userProfile} />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Catch-all Route for 404 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
