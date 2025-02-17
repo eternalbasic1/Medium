@@ -1,11 +1,16 @@
-import { useState } from "react";
-import { useLocation, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { SigninInput, SignupInput } from "@yashodaramreddy/medium-common";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 
-export const AuthForm = () => {
+interface AuthFormProps {
+  setUserProfile: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const AuthForm = ({ setUserProfile }: AuthFormProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isSignup = location.pathname === "/signup";
   const [signinInputs, setSigninInputs] = useState<SigninInput>({
     email: "",
@@ -26,7 +31,7 @@ export const AuthForm = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // const formData = { name, email, password };
     // console.log(isSignup ? "Signup Data:" : "Signin Data:", formData);
@@ -35,25 +40,31 @@ export const AuthForm = () => {
 
     try {
       isSignup
-        ? axios
+        ? await axios
             .post(`${BACKEND_URL}/user/signup`, {
-              password: "123456",
-              email: "value@gmail.com",
-              name: "checkname",
+              password: signupInputs?.password,
+              email: signupInputs?.email,
+              name: signupInputs?.name,
             })
             .then(function (response) {
-              console.log(response);
+              const jwt = response.data.jwt;
+              localStorage.setItem("token", jwt);
+              setUserProfile(response.data.name || "Anonymous");
+              navigate("/blogs");
             })
             .catch(function (error) {
               console.log(error);
             })
-        : axios
+        : await axios
             .post(`${BACKEND_URL}/user/signin`, {
-              password: "123456",
-              email: "value@gmail.com",
+              password: signinInputs?.password,
+              email: signinInputs?.email,
             })
             .then(function (response) {
-              console.log(response);
+              const jwt = response.data.jwt;
+              localStorage.setItem("token", jwt);
+              setUserProfile(response.data.name || "Anonymous");
+              navigate("/blogs");
             })
             .catch(function (error) {
               console.log(error);

@@ -1,15 +1,31 @@
-export const TopBar = () => {
-  return (
-    <div className="bg-white text-black py-4 px-8 flex items-center justify-between shadow-md border-b-2 border-black">
-      <img
-        src="http://upload.wikimedia.org/wikipedia/commons/0/0d/Medium_%28website%29_logo.svg"
-        alt="Medium Logo"
-        className="h-8"
-      />
+import { Avatar } from "./BlogCard";
+import { Link } from "react-router-dom";
 
-      <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center cursor-pointer">
-        <span className="text-lg font-semibold text-gray-700">👤</span>
-      </div>
+export const TopBar = ({ name }: { name: string }) => {
+  console.log("WHAT IS NAME", name);
+  return (
+    <div className="border-b flex justify-between px-10 py-4">
+      <Link to="/blogs">
+        <img
+          src="http://upload.wikimedia.org/wikipedia/commons/0/0d/Medium_%28website%29_logo.svg"
+          alt="Medium Logo"
+          className="h-8"
+        />{" "}
+      </Link>
+      {name?.length > 0 && (
+        <div>
+          <Link to={`/publish`}>
+            <button
+              type="button"
+              className="mr-4 text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 "
+            >
+              New
+            </button>
+          </Link>
+
+          <Avatar size={"big"} name={name ?? "⚠️"} />
+        </div>
+      )}
     </div>
   );
 };
