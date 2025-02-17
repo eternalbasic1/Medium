@@ -3,6 +3,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import { SigninInput, SignupInput } from "@yashodaramreddy/medium-common";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
+import { Spinner } from "./Spinner";
 
 interface AuthFormProps {
   setUserProfile: React.Dispatch<React.SetStateAction<string>>;
@@ -25,6 +26,7 @@ export const AuthForm = ({
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false); // Loading state
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -37,10 +39,7 @@ export const AuthForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // const formData = { name, email, password };
-    // console.log(isSignup ? "Signup Data:" : "Signin Data:", formData);
-    console.log(signinInputs);
-    console.log(signupInputs);
+    setLoading(true); // Set loading to true when submission starts
 
     try {
       isSignup
@@ -77,6 +76,8 @@ export const AuthForm = ({
             });
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoading(false); // Reset loading state after request is complete
     }
   };
 
@@ -153,9 +154,15 @@ export const AuthForm = ({
           </div>
           <button
             type="submit"
-            className="w-full bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-md transition"
+            className="w-full bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-md transition flex justify-center items-center"
           >
-            {isSignup ? "Sign Up" : "Sign In"}
+            {loading ? (
+              <Spinner /> // Assuming Spinner is already a centered component
+            ) : isSignup ? (
+              "Sign Up"
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
       </div>

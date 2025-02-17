@@ -7,6 +7,7 @@ import { ChangeEvent, useState } from "react";
 export const Publish = ({ userProfile }: { userProfile: string }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false); // Add loading state
   const navigate = useNavigate();
 
   return (
@@ -30,24 +31,35 @@ export const Publish = ({ userProfile }: { userProfile: string }) => {
           />
           <button
             onClick={async () => {
-              const response = await axios.post(
-                `${BACKEND_URL}/post`,
-                {
-                  title,
-                  content: description,
-                },
-                {
-                  headers: {
-                    Authorization: localStorage.getItem("token"),
+              setLoading(true); // Start loading
+              try {
+                const response = await axios.post(
+                  `${BACKEND_URL}/post`,
+                  {
+                    title,
+                    content: description,
                   },
-                }
-              );
-              navigate(`/blog/${response.data.id}`);
+                  {
+                    headers: {
+                      Authorization: localStorage.getItem("token"),
+                    },
+                  }
+                );
+                navigate(`/blog/${response.data.id}`);
+              } catch (error) {
+                console.error(error);
+              } finally {
+                setLoading(false); // Reset loading state
+              }
             }}
             type="submit"
             className="mt-4 inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
           >
-            Publish post
+            {loading ? (
+              <div className="spinner"></div> // Spinner while loading
+            ) : (
+              "Publish post"
+            )}
           </button>
         </div>
       </div>
