@@ -1,25 +1,49 @@
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
+import { SigninInput, SignupInput } from "@yashodaramreddy/medium-common";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
 
 export const AuthForm = () => {
   const location = useLocation();
   const isSignup = location.pathname === "/signup";
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [signinInputs, setSigninInputs] = useState<SigninInput>({
+    email: "",
+    password: "",
+  });
+  const [signupInputs, setSignupInputs] = useState<SignupInput>({
+    name: "",
+    email: "",
+    password: "",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === "name") setName(value);
-    if (name === "email") setEmail(value);
-    if (name === "password") setPassword(value);
+    if (isSignup) {
+      setSignupInputs((prev: SignupInput) => ({ ...prev, [name]: value }));
+    } else {
+      setSigninInputs((prev: SigninInput) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = { name, email, password };
-    console.log(isSignup ? "Signup Data:" : "Signin Data:", formData);
+    // const formData = { name, email, password };
+    // console.log(isSignup ? "Signup Data:" : "Signin Data:", formData);
+    console.log(signinInputs);
+    console.log(signupInputs);
+
+    axios
+      .post(`${BACKEND_URL}/user/signin/`, {
+        firstName: "Fred",
+        lastName: "Flintstone",
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
   return (
@@ -56,7 +80,7 @@ export const AuthForm = () => {
                 id="name"
                 name="name"
                 autoComplete="name"
-                value={name}
+                value={signupInputs.name}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border rounded-md bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-gray-500"
                 required
@@ -72,7 +96,7 @@ export const AuthForm = () => {
               id="email"
               name="email"
               autoComplete="email"
-              value={email}
+              value={isSignup ? signupInputs.email : signinInputs.email}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-md bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-gray-500"
               required
@@ -87,7 +111,7 @@ export const AuthForm = () => {
               id="password"
               name="password"
               autoComplete="current-password"
-              value={password}
+              value={isSignup ? signupInputs.password : signinInputs.password}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-md bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-gray-500"
               required
