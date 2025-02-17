@@ -33,17 +33,34 @@ export const AuthForm = () => {
     console.log(signinInputs);
     console.log(signupInputs);
 
-    axios
-      .post(`${BACKEND_URL}/user/signin/`, {
-        firstName: "Fred",
-        lastName: "Flintstone",
-      })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    try {
+      isSignup
+        ? axios
+            .post(`${BACKEND_URL}/user/signup`, {
+              password: "123456",
+              email: "value@gmail.com",
+              name: "checkname",
+            })
+            .then(function (response) {
+              console.log(response);
+            })
+            .catch(function (error) {
+              console.log(error);
+            })
+        : axios
+            .post(`${BACKEND_URL}/user/signin`, {
+              password: "123456",
+              email: "value@gmail.com",
+            })
+            .then(function (response) {
+              console.log(response);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
