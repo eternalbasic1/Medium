@@ -1,14 +1,45 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Signup } from "./pages/Signup";
 import { Signin } from "./pages/Signin";
 import { Blog } from "./pages/Blog";
-import "./index.css";
 import { Blogs } from "./pages/Blogs";
 import { Publish } from "./pages/Publish";
-import { useState } from "react";
+import { JSX, useEffect, useState } from "react";
+
+// Protected Route Component
+const ProtectedRoute = ({
+  children,
+  isAuthenticated,
+}: {
+  children: JSX.Element;
+  isAuthenticated: boolean;
+}) => {
+  return isAuthenticated ? children : <Navigate to="/signin" />;
+};
 
 function App() {
   const [userProfile, setUserProfile] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true); // Add loading state
+
+  // Effect to check token and update authentication status
+  //TODO: Not correct way of checking need to hit backend & verify with jwt decode & authenticate cause user can manually set in local storage
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      setIsAuthenticated(true); // Set authenticated if token exists
+    } else {
+      setIsAuthenticated(false); // Set false if no token
+    }
+
+    setLoading(false); // Set loading to false once authentication check is done
+  }, []);
+
+  // If the app is loading (checking token), don't render routes yet
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -19,6 +50,7 @@ function App() {
             element={
               <Signup
                 setUserProfile={setUserProfile}
+                setIsAuthenticated={setIsAuthenticated}
                 userProfile={userProfile}
               />
             }
@@ -28,18 +60,36 @@ function App() {
             element={
               <Signin
                 setUserProfile={setUserProfile}
+                setIsAuthenticated={setIsAuthenticated}
                 userProfile={userProfile}
               />
             }
           />
+
+          {/* Protected Routes */}
           <Route
             path="/blog/:id"
-            element={<Blog userProfile={userProfile} />}
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Blog userProfile={userProfile} />
+              </ProtectedRoute>
+            }
           />
-          <Route path="/blogs" element={<Blogs userProfile={userProfile} />} />
+          <Route
+            path="/blogs"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Blogs userProfile={userProfile} />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/publish"
-            element={<Publish userProfile={userProfile} />}
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Publish userProfile={userProfile} />
+              </ProtectedRoute>
+            }
           />
         </Routes>
       </BrowserRouter>

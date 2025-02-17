@@ -6,9 +6,13 @@ import { BACKEND_URL } from "../config";
 
 interface AuthFormProps {
   setUserProfile: React.Dispatch<React.SetStateAction<string>>;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const AuthForm = ({ setUserProfile }: AuthFormProps) => {
+export const AuthForm = ({
+  setUserProfile,
+  setIsAuthenticated,
+}: AuthFormProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isSignup = location.pathname === "/signup";
@@ -50,6 +54,7 @@ export const AuthForm = ({ setUserProfile }: AuthFormProps) => {
               const jwt = response.data.jwt;
               localStorage.setItem("token", jwt);
               setUserProfile(response.data.name || "Anonymous");
+              setIsAuthenticated(true);
               navigate("/blogs");
             })
             .catch(function (error) {
@@ -64,6 +69,7 @@ export const AuthForm = ({ setUserProfile }: AuthFormProps) => {
               const jwt = response.data.jwt;
               localStorage.setItem("token", jwt);
               setUserProfile(response.data.name || "Anonymous");
+              setIsAuthenticated(true);
               navigate("/blogs");
             })
             .catch(function (error) {
