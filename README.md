@@ -114,5 +114,5 @@ Before getting started, ensure you have the following installed:
 - **`src/pages/`**: Contains page components like `Publish` for creating blog posts.
 
 ## Common 
-- **cd Common 
-- **npm install
+- **cd Common** 
+- **npm install**
